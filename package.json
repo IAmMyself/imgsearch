@@ -1,0 +1,13 @@
+{
+  "name": "img-search",
+  "version": "1.0.0",
+  "description": "Image search abstraction layer.",
+  "main": "server.js",
+  "repository": "",
+  "author": "Mateo Pool",
+  "dependencies": {
+    "express": "~3.2.4",
+    "mongodb": "~2.2.11",
+    "https": "~1.0.0"
+  }
+}
