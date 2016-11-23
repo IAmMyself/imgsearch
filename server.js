@@ -4,30 +4,21 @@ var mongo = require('mongodb').MongoClient,
 	mongoURI = process.env.MONGOLAB_URI,
 	key = process.env.Key,
 	app = express();
-	
-function getUrl (str) {
-	//currently formatted to get URL from Bing API
-	var position = [str.search("&r=") + 3, str.search("&p=")];
-	
-	return decodeURIComponent(str.slice(position[0], position[1]));
-}
 
 console.log("Booted!");
 
 app.get("/imgsearch/*", function (req, res) {
-	var path = "/bing/v5.0/images/search?q=" + encodeURIComponent(req.params[0]) + "&count=10";
+	var path = "/customsearch/v1?q=" + encodeURIComponent(req.params[0]) + "&cx=009859638053662087588%3Apv2gad156us&num=10&searchType=image";
 		
 	if (req.query.offset != undefined) {
-		path += "&offset=" + encodeURIComponent(req.query.offset);
+		path += "&start=" + encodeURIComponent(req.query.offset);
 	}
 	
+	path += "&key=" + process.env.Key;
+	
 	var options = {
-		"hostname": "api.cognitive.microsoft.com",
-		"path": path,
-		"headers": {
-			"Content-Type": "multipart/form-data",
-			"Ocp-Apim-Subscription-Key": key
-		}
+		"hostname": "www.googleapis.com",
+		"path": path
 	};
 	
 	var binging = https.get(options, function(stuff) {
@@ -41,14 +32,14 @@ app.get("/imgsearch/*", function (req, res) {
 		})
 		
 		stuff.on("end", function () {
-			everything = JSON.parse(everything).value;
+			everything = JSON.parse(everything).items;
 			
 			for (var i = 0; i < everything.length; i++) {
 				importantStuff.push({
-					"url": getUrl(everything[i].contentUrl),
-					"snippet": everything[i].name,
-					"thumbnail": everything[i].thumbnailUrl,
-					"context": getUrl(everything[i].hostPageUrl)
+					"url": everything[i].link,
+					"snippet": everything[i].title,
+					"thumbnail": everything[i].image.thumbnailLink,
+					"context": everything[i].image.contextLink
 				});
 			}
 			
