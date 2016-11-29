@@ -1,11 +1,16 @@
 var mongo = require('mongodb').MongoClient,
 	express = require('express'),
 	https = require('https'),
+	path = require("path"),
 	mongoURI = process.env.MONGOLAB_URI,
 	key = process.env.Key,
 	app = express();
 
 console.log("Booted!");
+
+app.get("/", function(req, res) {
+	res.sendfile(path.join(__dirname, "README.html"));
+})
 
 app.get("/imgsearch/*", function (req, res) {
 	var path = "/customsearch/v1?q=" + encodeURIComponent(req.params[0]) + "&cx=009859638053662087588%3Apv2gad156us&num=10&searchType=image";
